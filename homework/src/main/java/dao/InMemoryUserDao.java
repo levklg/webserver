@@ -40,3 +40,4 @@ public class InMemoryUserDao implements UserDao {
         return users.values().stream().filter(v -> v.getLogin().equals(login)).findFirst();
     }
 }
+

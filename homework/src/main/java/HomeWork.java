@@ -38,6 +38,7 @@ public class HomeWork {
 
 
         UserDao userDao = new InMemoryUserDao();
+
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
 
@@ -89,6 +90,12 @@ public class HomeWork {
         var managerSecondSelected = dbServiceManager.getManager(managerSecond.getNo())
                 .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
         log.info("managerSecondSelected:{}", managerSecondSelected);
+
+
+
+
+
+
     }
 
     private static void flywayMigrations(DataSource dataSource) {

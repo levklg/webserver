@@ -11,7 +11,6 @@ import services.UserAuthService;
 import servlet.AuthorizationFilter;
 import servlet.LoginServlet;
 
-
 import java.util.Arrays;
 
 public class UsersWebServerWithFilterBasedSecurity extends UsersWebServerSimple {

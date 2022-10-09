@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dao.UserDao;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.LoginService;
@@ -9,8 +10,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.security.Constraint;
-import ru.otus.dao.UserDao;
-import ru.otus.services.TemplateProcessor;
+import services.TemplateProcessor;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;

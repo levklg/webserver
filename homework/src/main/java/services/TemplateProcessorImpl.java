@@ -7,6 +7,7 @@ import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TemplateProcessorImpl implements TemplateProcessor {
@@ -22,9 +23,12 @@ public class TemplateProcessorImpl implements TemplateProcessor {
 
     @Override
     public String getPage(String filename, Map<String, Object> data) throws IOException {
+
+
         try (Writer stream = new StringWriter()) {
             Template template = configuration.getTemplate(filename);
             template.process(data, stream);
+
             return stream.toString();
         } catch (TemplateException e) {
             throw new IOException(e);

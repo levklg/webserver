@@ -28,27 +28,25 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Имя</th>
-
+                    <th>ID</th>
+                    <th>Имя</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
 
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
 
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td >Larry </td>
+                <#list test1?keys as key>
 
-                </tr>
+                <tr>
+
+                    <td> ${key}</td>>
+
+                </tr>>
+
+                </#list>
+
+
+
                 </tbody>
             </table>
         </div>
@@ -61,15 +59,15 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Label</th>
-                    <th scope="col">Param1</th>
+                    <th >ID</th>
+                    <th >Label</th>
+                    <th >Param1</th>
 
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <th scope="row">1</th>
+
                     <td>Mark</td>
                     <td>0</td>
 
