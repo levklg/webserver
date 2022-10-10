@@ -15,8 +15,17 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getSelectAllSql() {
+        StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
+        Class<?> clazz = entityClassMetaData.getClazz();
+        String nameClass =  clazz.getSimpleName();
+        if(nameClass.equals("Client")){
+            stringBuilder.append("client");
+        }
+        if(nameClass.equals("Manager")){
+            stringBuilder.append("manager");
+        }
 
-        return null;
+        return stringBuilder.toString();
     }
 
     @Override

@@ -35,13 +35,13 @@
                 <tbody>
 
 
-                <#list test1?keys as key>
+                <#list clientList as client>
 
                 <tr>
 
-                    <td> ${key}</td>>
-
-                </tr>>
+                    <td> ${client.id}</td>
+                    <td> ${client.name}</td>
+                </tr>
 
                 </#list>
 
@@ -66,22 +66,17 @@
                 </tr>
                 </thead>
                 <tbody>
+                <#list managerList as manager>
+
                 <tr>
 
-                    <td>Mark</td>
-                    <td>0</td>
+                    <td> ${manager.no}</td>
+                    <td> ${manager.label}</td>
+                    <td> ${manager.param1}</td>
+                </tr>
 
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>0</td>
-                </tr>
+                </#list>
+
                 </tbody>
             </table>
         </div>

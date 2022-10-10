@@ -9,6 +9,7 @@ import crm.model.Manager;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,14 +92,65 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public List<T> findAll(Connection connection) {
+
+        Object object = entitySQLMetaData.getObject();
+        Class<?> clazz = object.getClass();
+        String className = clazz.getSimpleName();
+        List<T> list = new ArrayList<>();
         ResultSet resultSet = null;
-  try(var statement = connection.prepareStatement("SELECT * FROM client")){
-      entitySQLMetaData.getSelectAllSql();
-       resultSet = statement.executeQuery();
+
+        String s = entitySQLMetaData.getSelectAllSql();
+        try(var statement = connection.prepareStatement(s)){
+           
+        resultSet = statement.executeQuery();
+
+            if(className.equals("Client")){
+                try {
+                    while (resultSet.next()) {
+
+                        Client client = new Client();
+                        var valueID = resultSet.getLong("id");
+                        var valueName = resultSet.getString("name");
+                        client.setId(valueID);
+                        client.setName(valueName);
+                        list.add((T) client);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+
+                }
+
+            }
+            if(className.equals("Manager")){
+                while (true) {
+                    try {
+                        if (!resultSet.next()) break;
+                        Manager manager = new Manager();
+                        long valueID = 0;
+
+                        valueID = resultSet.getLong("id");
+                        var valueLabel = resultSet.getString("label");
+                        var valueParam1 = resultSet.getString("param1");
+                        manager.setNo(valueID);
+                        manager.setLabel(valueLabel);
+                        manager.setParam1(valueParam1);
+
+                        list.add((T) manager);
+
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
   } catch (SQLException e) {
       e.printStackTrace();
+
   }
-return  null;
+
+
+return  list;
     }
 
     @Override

@@ -2,16 +2,18 @@ package dao;
 
 
 
+import crm.model.Client;
+import crm.model.Manager;
 import model.User;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 public class InMemoryUserDao implements UserDao {
 
     private final Map<Long, User> users;
+    private final List<Client> listClient = new ArrayList<>();
+    private final List<Manager> listMahager = new ArrayList<>();
+
 
     public InMemoryUserDao() {
         users = new HashMap<>();
@@ -39,5 +41,22 @@ public class InMemoryUserDao implements UserDao {
     public Optional<User> findByLogin(String login) {
         return users.values().stream().filter(v -> v.getLogin().equals(login)).findFirst();
     }
+
+    public void addClient(Client client){
+       this.listClient.add(client);
+
+    }
+    public List<Client> getListClient(){
+        return this.listClient;
+    }
+
+    public void addManager(Manager manager){
+        this.listMahager.add(manager);
+
+    }
+    public List<Manager> getListMahager(){
+        return this.listMahager;
+    }
+
 }
 
