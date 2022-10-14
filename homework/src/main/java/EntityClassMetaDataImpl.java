@@ -1,3 +1,4 @@
+import crm.model.Client;
 import crm.model.Id;
 import mapper.EntityClassMetaData;
 
@@ -8,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData {
-   private Class<?> clazz;
-   private  Object object;
+   private Class<?> clazz = Client.class;
+   private  Object object = new Client();
 
 
     public EntityClassMetaDataImpl() {

@@ -4,7 +4,6 @@ package mapper;
 import core.repository.DataTemplate;
 import core.repository.executor.DbExecutor;
 import crm.model.Client;
-import crm.model.Manager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,7 +36,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         Class<?> clazz = object.getClass();
         String className = clazz.getSimpleName();
         Client client = null;
-        Manager manager = null;
+
 
 
             try (var statement = connection.prepareStatement(s)) {
@@ -56,18 +55,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                             }
                          }
 
-                    if(className.equals("Manager")){
-                        while (result.next()) {
-                            manager = new Manager();
-                            var valueID = result.getLong("id");
-                            var valueLabel = result.getString("label");
-                            var valueParam1 = result.getString("param1");
 
-                            manager.setNo(valueID);
-                            manager.setLabel(valueLabel);
-                            manager.setParam1(valueParam1);
-                        }
-                    }
             }catch (SQLException ex){
                     connection.rollback(savePoint);
                 }
@@ -81,10 +69,6 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
           Optional<T> optional = (Optional<T>) Optional.of(client);
           return  optional;
       }
-        if(manager != null) {
-            Optional<T> optional = (Optional<T>) Optional.of(manager);
-            return  optional;
-        }
 
       return  null;
 
@@ -94,6 +78,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     public List<T> findAll(Connection connection) {
 
         Object object = entitySQLMetaData.getObject();
+        if(object == null) object = new Client("","");
         Class<?> clazz = object.getClass();
         String className = clazz.getSimpleName();
         List<T> list = new ArrayList<>();
@@ -101,7 +86,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
         String s = entitySQLMetaData.getSelectAllSql();
         try(var statement = connection.prepareStatement(s)){
-           
+
         resultSet = statement.executeQuery();
 
             if(className.equals("Client")){
@@ -111,8 +96,10 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                         Client client = new Client();
                         var valueID = resultSet.getLong("id");
                         var valueName = resultSet.getString("name");
+                        var valuePhone = resultSet.getString("phone");
                         client.setId(valueID);
                         client.setName(valueName);
+                        client.setPhone(valuePhone);
                         list.add((T) client);
                     }
                 } catch (SQLException e) {
@@ -121,28 +108,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                 }
 
             }
-            if(className.equals("Manager")){
-                while (true) {
-                    try {
-                        if (!resultSet.next()) break;
-                        Manager manager = new Manager();
-                        long valueID = 0;
 
-                        valueID = resultSet.getLong("id");
-                        var valueLabel = resultSet.getString("label");
-                        var valueParam1 = resultSet.getString("param1");
-                        manager.setNo(valueID);
-                        manager.setLabel(valueLabel);
-                        manager.setParam1(valueParam1);
-
-                        list.add((T) manager);
-
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
 
   } catch (SQLException e) {
       e.printStackTrace();

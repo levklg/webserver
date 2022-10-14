@@ -1,7 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import dao.UserDao;
+import crm.service.DbServiceClientImpl;
+
 import helpers.FileSystemHelper;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -10,7 +11,6 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import services.TemplateProcessor;
-import servlet.UsersApiServlet;
 import servlet.UsersServlet;
 
 
@@ -18,15 +18,16 @@ public class UsersWebServerSimple implements UsersWebServer {
     private static final String START_PAGE_NAME = "index.html";
     private static final String COMMON_RESOURCES_DIR = "static";
 
-    private final UserDao userDao;
+
     private final Gson gson;
     protected final TemplateProcessor templateProcessor;
     private final Server server;
+    private final DbServiceClientImpl dbServiceClient;
+    public UsersWebServerSimple(int port, Gson gson, TemplateProcessor templateProcessor,DbServiceClientImpl dbServiceClient) {
 
-    public UsersWebServerSimple(int port, UserDao userDao, Gson gson, TemplateProcessor templateProcessor) {
-        this.userDao = userDao;
         this.gson = gson;
         this.templateProcessor = templateProcessor;
+        this.dbServiceClient = dbServiceClient;
         server = new Server(port);
     }
 
@@ -76,9 +77,9 @@ public class UsersWebServerSimple implements UsersWebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), "/users");
-        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), "/login");
-        servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson)), "/api/user/*");
+        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, dbServiceClient)), "/users");
+        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor,  dbServiceClient)), "/login");
+
         return servletContextHandler;
     }
 }

@@ -25,7 +25,7 @@ public class ClientDataTemplateJdbc implements DataTemplate<Client> {
         return dbExecutor.executeSelect(connection, "select id, name from client where id  = ?", List.of(id), rs -> {
             try {
                 if (rs.next()) {
-                    return new Client(rs.getLong("id"), rs.getString("name"));
+                    return new Client(rs.getLong("id"), rs.getString("name"),rs.getString("phone"));
                 }
                 return null;
             } catch (SQLException e) {
@@ -40,7 +40,7 @@ public class ClientDataTemplateJdbc implements DataTemplate<Client> {
             var clientList = new ArrayList<Client>();
             try {
                 while (rs.next()) {
-                    clientList.add(new Client(rs.getLong("id"), rs.getString("name")));
+                    clientList.add(new Client(rs.getLong("id"), rs.getString("name"),rs.getString("phone")));
                 }
                 return clientList;
             } catch (SQLException e) {

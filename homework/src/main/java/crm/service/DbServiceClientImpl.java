@@ -28,7 +28,7 @@ public class DbServiceClientImpl implements DBServiceClient {
 
                 var clientId = dataTemplate.insert(connection, client);
                 client.setId(clientId);
-                var createdClient = new Client(clientId, client.getName());
+                var createdClient = new Client(clientId, client.getName(), client.getPhone());
                 log.info("created client: {}", createdClient);
                 return createdClient;
             }
