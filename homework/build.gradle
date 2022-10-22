@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    implementation 'org.projectlombok:lombok:1.18.20'
 
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
 
@@ -49,6 +50,7 @@ dependencies {
 
 // https://mvnrepository.com/artifact/org.freemarker/freemarker
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.31'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.11.Final'
 
 
 

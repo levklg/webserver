@@ -1,40 +1,98 @@
 package crm.model;
 
 
-public class Client {
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.GenerationType.SEQUENCE;
+
+@Entity
+@Table(name = "clients")
+public class Client implements Cloneable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id")
     private Long id;
 
-    private String name;
+    @Column(name = "name")
+    private String name ;
 
-    private String phone;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "client_id")
+    private List<Phone> phoneList;
 
+    @Transient
+    private List<String> listNumber;
+
+    public Client(String name) {
+        this.id = null;
+        this.name = name;
+
+
+    }
+
+    public Client(Long id, String name,String number) {
+        this.id = id;
+        this.name = name;
+        List<Phone> phones = new ArrayList<>();
+        Phone phone = new Phone(number);
+        phones.add(phone);
+        this.phoneList = phones;
+
+    }
+
+    public Client(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Client() {
     }
 
-    public Client(String name,String phone) {
+    public Client( String name,  String number ) {
         this.id = null;
         this.name = name;
-        this.phone = phone;
+        List<Phone> phones = new ArrayList<>();
+        Phone phone = new Phone(number);
+        phones.add(phone);
+        this.phoneList = phones;
     }
 
-    public Client(Long id, String name, String phone ) {
+    public Client(Long id, String name, List<Phone> phones) {
         this.id = id;
         this.name = name;
-        this.phone = phone;
+        this.phoneList = phones;
+
+    }
+
+
+
+
+    @Override
+    public Client clone() {
+        return  new Client(this.id, this.name, this.phoneList);
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
-
-    public String getPhone(){return phone;}
 
     public void setId(Long id) {
         this.id = id;
@@ -44,13 +102,14 @@ public class Client {
         this.name = name;
     }
 
-    public void setPhone(String phone){this.phone = phone;}
+    public List<String> getListNumber(){
 
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+         listNumber = new ArrayList<>();
+        for (Phone phone : this.phoneList) {
+            listNumber.add(phone.getNumber());
+        }
+        return listNumber;
     }
+
+
 }

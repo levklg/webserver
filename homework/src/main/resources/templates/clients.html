@@ -5,17 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <script>
-        function getUserById() {
-            const userIdTextBox = document.getElementById('userIdTextBox');
-            const userDataContainer = document.getElementById('userDataContainer');
-            const id = userIdTextBox.value;
-            //fetch('api/user?id=' + id)
-            fetch('api/user/' + id)
-                .then(response => response.json())
-                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
-        }
-    </script>
+
 </head>
 <body>
 
@@ -39,16 +29,21 @@
                 </thead>
                 <tbody>
 
+                <#if clientList??>
                 <#list clientList as client>
 
                 <tr>
                     <td> ${client.id}</td>
                     <td> ${client.name}</td>
-                    <td> ${client.phone}</td>
+                    <#list client.listNumber as phone>
+
+                        <td> ${phone}</td>
+
+                   </#list>
                 </tr>
 
                 </#list>
-
+            </#if>
                 </tbody>
             </table>
 
@@ -62,7 +57,7 @@
 
 
 
-    <form class="row g-3" method="post" action="users">
+    <form class="row g-3" method="post" action="clients">
     <div class="row">
         <div class="col">
 

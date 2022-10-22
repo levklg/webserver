@@ -1,60 +1,56 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import core.repository.executor.DbExecutorImpl;
-import core.sessionmanager.TransactionRunnerJdbc;
-import crm.datasource.DriverManagerDataSource;
+
+import core.repository.DataTemplateHibernate;
+import core.repository.HibernateUtils;
+
+import core.sessionmanager.TransactionManagerHibernate;
+import crm.dbmigrations.MigrationsExecutorFlyway;
 import crm.model.Client;
+import crm.model.Phone;
 import crm.service.DbServiceClientImpl;
 import helpers.FileSystemHelper;
-import mapper.DataTemplateJdbc;
-import mapper.EntityClassMetaData;
-import mapper.EntitySQLMetaData;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.LoginService;
-import org.flywaydb.core.Flyway;
+import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.UsersWebServer;
-import server.UsersWebServerWithBasicSecurity;
+import server.ClientsWebServer;
+import server.ClientsWebServerWithBasicSecurity;
 import services.TemplateProcessor;
 import services.TemplateProcessorImpl;
 
-import javax.sql.DataSource;
+import java.util.ArrayList;
 
 
 public class HomeWork {
+    public static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static final int WEB_SERVER_PORT = 8080;
     private static final String TEMPLATES_DIR = "/templates/";
     private static final String HASH_LOGIN_SERVICE_CONFIG_NAME = "realm.properties";
     private static final String REALM_NAME = "AnyRealm";
-
-    private static final String URL = "jdbc:postgresql://localhost:5430/demoDB ";
-    private static final String USER = "usr";
-    private static final String PASSWORD = "pwd";
-
     private static final Logger log = LoggerFactory.getLogger(HomeWork.class);
 
     public static void main(String[] args) throws Exception {
 
+        var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
+        var dbUrl = configuration.getProperty("hibernate.connection.url");
+        var dbUserName = configuration.getProperty("hibernate.connection.username");
+        var dbPassword = configuration.getProperty("hibernate.connection.password");
+        new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
-         var dataSource = new DriverManagerDataSource(URL, USER, PASSWORD);
-        flywayMigrations(dataSource);
-        var transactionRunner = new TransactionRunnerJdbc(dataSource);
-        var dbExecutor = new DbExecutorImpl();
+        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, Phone.class);//, Address.class,s
 
-        EntityClassMetaData entityClassMetaDataClient = new EntityClassMetaDataImpl();
-        EntitySQLMetaData entitySQLMetaDataClient =  new EntitySQLMetaDataImpl(entityClassMetaDataClient);
+        var transactionManager = new TransactionManagerHibernate(sessionFactory);
+///
+        var clientTemplate = new DataTemplateHibernate<>(Client.class);
 
-        var dataTemplateClient = new DataTemplateJdbc<Client>(dbExecutor, entitySQLMetaDataClient); //реализация DataTemplate, универсальная
+        var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate);
 
-
-        var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient);
         dbServiceClient.saveClient(new Client("Igir", "9109100000"));
         dbServiceClient.saveClient(new Client("Sergey", "9108764567"));
         dbServiceClient.saveClient(new Client("Danil", "9032342313"));
-
-
 
 
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -64,7 +60,7 @@ public class HomeWork {
         LoginService loginService = new HashLoginService(REALM_NAME, hashLoginServiceConfigPath);
 
 
-        UsersWebServer usersWebServer = new UsersWebServerWithBasicSecurity(WEB_SERVER_PORT,
+        ClientsWebServer usersWebServer = new ClientsWebServerWithBasicSecurity(WEB_SERVER_PORT,
                 loginService, gson, templateProcessor, dbServiceClient);
 
         usersWebServer.start();
@@ -72,14 +68,5 @@ public class HomeWork {
 
     }
 
-    private static void flywayMigrations(DataSource dataSource) {
-        log.info("db migration started...");
-        var flyway = Flyway.configure()
-                .dataSource(dataSource)
-                .locations("classpath:/db/migration")
-                .load();
-        flyway.migrate();
-        log.info("db migration finished.");
-        log.info("***");
-    }
+
 }

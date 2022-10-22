@@ -1,16 +1,17 @@
 package core.repository;
 
-import java.sql.Connection;
+import org.hibernate.Session;
+
 import java.util.List;
 import java.util.Optional;
 
 public interface DataTemplate<T> {
-    Optional<T> findById(Connection connection, long id);
+    Optional<T> findById(Session session, long id);
+    List<T> findByEntityField(Session session, String entityFieldName, Object entityFieldValue);
 
-    List<T> findAll(Connection connection);
+    List<T> findAll(Session session);
 
-    long insert(Connection connection, T object);
+    void insert(Session session, T object);
 
-    void update(Connection connection, T object);
-    void setObject(Object object);
+    void update(Session session, T object);
 }

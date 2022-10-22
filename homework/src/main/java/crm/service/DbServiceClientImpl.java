@@ -1,7 +1,8 @@
 package crm.service;
 
 import core.repository.DataTemplate;
-import core.sessionmanager.TransactionRunner;
+import core.sessionmanager.TransactionManager;
+
 import crm.model.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,36 +13,33 @@ import java.util.Optional;
 public class DbServiceClientImpl implements DBServiceClient {
     private static final Logger log = LoggerFactory.getLogger(DbServiceClientImpl.class);
 
-    private final DataTemplate<Client> dataTemplate;
-    private final TransactionRunner transactionRunner;
+    private final DataTemplate<Client> clientDataTemplate;
+    private final TransactionManager transactionManager;
 
-    public DbServiceClientImpl(TransactionRunner transactionRunner, DataTemplate<Client> dataTemplate) {
-        this.transactionRunner = transactionRunner;
-        this.dataTemplate = dataTemplate;
+    public DbServiceClientImpl(TransactionManager transactionManager, DataTemplate<Client> clientDataTemplate) {
+        this.transactionManager = transactionManager;
+        this.clientDataTemplate = clientDataTemplate;
     }
 
     @Override
     public Client saveClient(Client client) {
-        dataTemplate.setObject(client);
-        return transactionRunner.doInTransaction(connection -> {
+        return transactionManager.doInTransaction(session -> {
+            var clientCloned = client.clone();
             if (client.getId() == null) {
-
-                var clientId = dataTemplate.insert(connection, client);
-                client.setId(clientId);
-                var createdClient = new Client(clientId, client.getName(), client.getPhone());
-                log.info("created client: {}", createdClient);
-                return createdClient;
+                clientDataTemplate.insert(session, (Client) clientCloned);
+                log.info("created client: {}", clientCloned);
+                return clientCloned;
             }
-            dataTemplate.update(connection, client);
-            log.info("updated client: {}", client);
-            return client;
+            clientDataTemplate.update(session, (Client) clientCloned);
+            log.info("updated client: {}", clientCloned);
+            return clientCloned;
         });
     }
 
     @Override
     public Optional<Client> getClient(long id) {
-        return transactionRunner.doInTransaction(connection -> {
-            var clientOptional = dataTemplate.findById(connection, id);
+        return transactionManager.doInReadOnlyTransaction(session -> {
+            var clientOptional = clientDataTemplate.findById(session, id);
             log.info("client: {}", clientOptional);
             return clientOptional;
         });
@@ -49,8 +47,8 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     @Override
     public List<Client> findAll() {
-        return transactionRunner.doInTransaction(connection -> {
-            var clientList = dataTemplate.findAll(connection);
+        return transactionManager.doInReadOnlyTransaction(session -> {
+            var clientList = clientDataTemplate.findAll(session);
             log.info("clientList:{}", clientList);
             return clientList;
         });
