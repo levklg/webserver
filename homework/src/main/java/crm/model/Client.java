@@ -26,30 +26,16 @@ public class Client implements Cloneable {
     @JoinColumn(name = "client_id")
     private List<Phone> phoneList;
 
-    @Transient
-    private List<String> listNumber;
-
-    public Client(String name) {
-        this.id = null;
-        this.name = name;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
 
-    }
 
-    public Client(Long id, String name,String number) {
-        this.id = id;
-        this.name = name;
-        List<Phone> phones = new ArrayList<>();
-        Phone phone = new Phone(number);
-        phones.add(phone);
-        this.phoneList = phones;
 
-    }
 
-    public Client(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+
+
 
     public Client() {
     }
@@ -60,6 +46,7 @@ public class Client implements Cloneable {
         List<Phone> phones = new ArrayList<>();
         Phone phone = new Phone(number);
         phones.add(phone);
+        this.address = new Address("");
         this.phoneList = phones;
     }
 
@@ -67,15 +54,32 @@ public class Client implements Cloneable {
         this.id = id;
         this.name = name;
         this.phoneList = phones;
+        this.address = new Address("");
 
     }
 
+    public Client(Long id, String name, List<Phone> phones, Address address) {
+        this.id = id;
+        this.name = name;
+        this.phoneList = phones;
+        this.address = address;
+
+    }
+    public Client( String name,  String number, String address ) {
+        this.id = null;
+        this.name = name;
+        List<Phone> phones = new ArrayList<>();
+        Phone phone = new Phone(number);
+        phones.add(phone);
+        this.address = new Address(address);
+        this.phoneList = phones;
+    }
 
 
 
     @Override
     public Client clone() {
-        return  new Client(this.id, this.name, this.phoneList);
+        return  new Client(this.id, this.name, this.phoneList, this.address);
     }
 
     @Override
@@ -104,7 +108,7 @@ public class Client implements Cloneable {
 
     public List<String> getListNumber(){
 
-         listNumber = new ArrayList<>();
+        List listNumber = new ArrayList<>();
         for (Phone phone : this.phoneList) {
             listNumber.add(phone.getNumber());
         }
@@ -112,4 +116,7 @@ public class Client implements Cloneable {
     }
 
 
+    public String getAddress() {
+        return address.getStreet();
+    }
 }

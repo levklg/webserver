@@ -21,31 +21,31 @@
 
             <table class="table">
                 <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Имя</th>
-                    <th>Телефон</th>
-                </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя</th>
+                        <th>Телефон</th>
+                        <th>Адрес</th>
+                    </tr>
                 </thead>
                 <tbody>
+                    <#if clientList??>
+                    <#list clientList as client>
 
-                <#if clientList??>
-                <#list clientList as client>
-
-                <tr>
-                    <td> ${client.id}</td>
-                    <td> ${client.name}</td>
-                    <#list client.listNumber as phone>
-
-                        <td> ${phone}</td>
-
-                   </#list>
-                </tr>
+                    <tr>
+                        <td> ${client.id}</td>
+                        <td> ${client.name}</td>
+                        <#list client.listNumber as phone>
+                            <td> ${phone}</td>
+                       </#list>
+                    <td>${client.address}</td>
+                    </tr>
 
                 </#list>
             </#if>
                 </tbody>
             </table>
+
 
 
         </div>
@@ -71,6 +71,9 @@
             <div class="p-2"> </div>
             <label for="clientPhone" class="visually-hidden">Имя</label>
             <input type="text" class="form-control" id="clientPhone" name="clientPhone"  placeholder="phone">
+            <div class="p-2"> </div>
+            <label for="address" class="visually-hidden">Имя</label>
+            <input type="text" class="form-control" id="address" name="address"  placeholder="address">
         </div>
         <div class="col">  </div>
     </div>

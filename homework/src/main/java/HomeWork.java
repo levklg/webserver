@@ -6,6 +6,7 @@ import core.repository.HibernateUtils;
 
 import core.sessionmanager.TransactionManagerHibernate;
 import crm.dbmigrations.MigrationsExecutorFlyway;
+import crm.model.Address;
 import crm.model.Client;
 import crm.model.Phone;
 import crm.service.DbServiceClientImpl;
@@ -40,7 +41,7 @@ public class HomeWork {
         var dbPassword = configuration.getProperty("hibernate.connection.password");
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
-        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, Phone.class);//, Address.class,s
+        var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, Phone.class, Address.class);
 
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
 ///
@@ -48,9 +49,9 @@ public class HomeWork {
 
         var dbServiceClient = new DbServiceClientImpl(transactionManager, clientTemplate);
 
-        dbServiceClient.saveClient(new Client("Igir", "9109100000"));
-        dbServiceClient.saveClient(new Client("Sergey", "9108764567"));
-        dbServiceClient.saveClient(new Client("Danil", "9032342313"));
+        dbServiceClient.saveClient(new Client("Igir", "9109100000","ул.Московская"));
+        dbServiceClient.saveClient(new Client("Sergey", "9108764567", "ул.Ленина"));
+        dbServiceClient.saveClient(new Client("Danil", "9032342313", "ул.Кирова"));
 
 
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();

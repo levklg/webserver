@@ -15,8 +15,7 @@ import servlet.ClientsServlet;
 
 
 public class ClientsWebServerSimple implements ClientsWebServer {
-    private static final String START_PAGE_NAME = "index.html";
-    private static final String COMMON_RESOURCES_DIR = "static";
+
     protected final TemplateProcessor templateProcessor;
     private final Gson gson;
     private final Server server;
@@ -69,16 +68,14 @@ public class ClientsWebServerSimple implements ClientsWebServer {
     private ResourceHandler createResourceHandler() {
         ResourceHandler resourceHandler = new ResourceHandler();
         resourceHandler.setDirectoriesListed(false);
-        resourceHandler.setWelcomeFiles(new String[]{START_PAGE_NAME});
-        resourceHandler.setResourceBase(FileSystemHelper.localFileNameOrResourceNameToFullPath(COMMON_RESOURCES_DIR));
+        resourceHandler.setWelcomeFiles(new String[]{"index.html"});
+        resourceHandler.setResourceBase(FileSystemHelper.localFileNameOrResourceNameToFullPath("static"));
         return resourceHandler;
     }
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.addServlet(new ServletHolder(new ClientsServlet(templateProcessor, dbServiceClient)), "/clients");
-        servletContextHandler.addServlet(new ServletHolder(new ClientsServlet(templateProcessor, dbServiceClient)), "/login");
-
         return servletContextHandler;
     }
 }

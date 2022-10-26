@@ -28,7 +28,9 @@ public class Phone {
     @JoinColumn(name = "number")
     private String number = "";
 
-
+    @ManyToOne
+    @JoinColumn(name="client_id", insertable=false, updatable=false, nullable=false)
+    private Client client;
 
     public Phone(String number){
        this.number = (number);
@@ -43,6 +45,7 @@ public class Phone {
         String s = this.number;
         return s ;
     }
+
 
 
 }
